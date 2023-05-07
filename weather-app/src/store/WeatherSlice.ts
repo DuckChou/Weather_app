@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 import {
@@ -57,12 +57,22 @@ interface FiveDayForecastObject {
   day: string;
 }
 
+interface NewCityParams{
+  lat: number,
+  lon: number,
+  city: string
+}
+
+export interface Location{
+  lat: number,
+  lon: number
+}
 
 export const getCurrentWeather = createAsyncThunk(
   'weather/getCurrentWeather',
-  async () => {
+  async (params:Location) => {
     const response = await axios.get(
-      url.currentWeather('lat=51.5073219', 'lon=-0.1276474')
+      url.currentWeather('lat='+params.lat, 'lon='+params.lon)
     );
     const {
       weather,
@@ -79,19 +89,6 @@ export const getCurrentWeather = createAsyncThunk(
     const sunrise = getTime(sunriseUnixUTC, timezone);
     const sunset = getTime(sunsetUnixUTC, timezone);
     const windSpeed = mps_to_kmh(visibility);
-
-    // console.log(
-    //   date,
-    //   description,
-    //   icon,
-    //   temp,
-    //   feels_like,
-    //   pressure,
-    //   humidity,
-    //   sunrise,
-    //   sunset,
-    //   windSpeed
-    // );
 
     return {
       date,
@@ -111,9 +108,9 @@ export const getCurrentWeather = createAsyncThunk(
 
 export const getAirPollution = createAsyncThunk(
   'weather/getAirPollution',
-  async () => {
+  async (params:Location) => {
     const response = await axios.get(
-      url.airPollution('lat=51.5073219', 'lon=-0.1276474')
+      url.airPollution('lat='+params.lat, 'lon='+params.lon)
     );
     const { list } = response.data;
     const [{ components, main }] = list;
@@ -136,9 +133,9 @@ export const getAirPollution = createAsyncThunk(
   }
 );
 
-export const getForecast = createAsyncThunk('weather/getForecast', async () => {
+export const getForecast = createAsyncThunk('weather/getForecast', async (params:Location) => {
   const response = await axios.get(
-    url.forecast('lat=51.5073219', 'lon=-0.1276474')
+    url.forecast('lat='+params.lat, 'lon='+params.lon)
   );
   const {
     list: forecastList,
@@ -196,8 +193,15 @@ export const getForecast = createAsyncThunk('weather/getForecast', async () => {
   return { weatherToday, windToday, fiveDayForecast };
 });
 
+export const newCity = createAsyncThunk(
+  'weather/newCity',
+  async (params:NewCityParams) => {
+    getForecast(params);
+  });
+
 const initialState = {
-  currentWeather: { lat: -35.28255, lng: 149.1333022 },
+  currentCity: 'Canberra',
+  location:{lat:-35.2975906, lon:149.1012676},
   currentWeatherData: {} as CurrentWeatherDataObject,
   airPollutionData: {} as AirPollutionDataObject,
   weatherTodayData: [] as WeatherTodayObject[],
@@ -209,15 +213,34 @@ const initialState = {
 const weatherSlice = createSlice({
   name: 'weather',
   initialState,
-  reducers: {},
+  reducers: {
+    changeCity: (state, action:PayloadAction<{city:string,lat:number,lon:number}>) => {
+      state.currentCity = action.payload.city;
+      state.location.lat = action.payload.lat;
+      state.location.lon = action.payload.lon;          
+    },
+    loading: (state) => {
+      state.loading = true;
+    }
+    
+  },
   extraReducers: (builder) => {
+    builder.addCase(getCurrentWeather.pending, (state) => {
+      state.loading = true;
+    });
     builder.addCase(getCurrentWeather.fulfilled, (state, action) => {
       state.loading = false;
       state.currentWeatherData = action.payload;
     });
+    builder.addCase(getAirPollution.pending, (state) => {
+      state.loading = true;
+    });
     builder.addCase(getAirPollution.fulfilled, (state, action) => {
       state.loading = false;
       state.airPollutionData = action.payload;
+    });
+    builder.addCase(getForecast.pending, (state) => {
+      state.loading = true;
     });
     builder.addCase(getForecast.fulfilled, (state, action) => {
       state.loading = false;
@@ -229,3 +252,4 @@ const weatherSlice = createSlice({
 });
 
 export default weatherSlice.reducer;
+export const { changeCity,loading } = weatherSlice.actions;

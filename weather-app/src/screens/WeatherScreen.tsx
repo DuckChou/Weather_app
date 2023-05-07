@@ -10,8 +10,15 @@ import {
 } from '../store/WeatherSlice';
 import { getImage } from '../utils/imageUrl';
 
+import { useEffect } from 'react';
+
+
+
 function WeatherScreen() {
   const dispatch = useAppDispatch();
+
+  const isLoading = useAppSelector((state) => state.weather.loading);
+
   const weather = useAppSelector((state) => state.weather.currentWeatherData);
   const airPollution = useAppSelector(
     (state) => state.weather.airPollutionData
@@ -24,13 +31,16 @@ function WeatherScreen() {
     (state) => state.weather.fiveDayForecastData
   );
 
+  const currentCity = useAppSelector((state) => state.weather.currentCity);
+  const currentLocation = useAppSelector( (state) => state.weather.location);
+  
   const badgeClassName = 'badge label-1 aqi-' + airPollution.aqi;
 
-  React.useEffect(() => {
-    dispatch(getCurrentWeather());
-    dispatch(getAirPollution());
-    dispatch(getForecast());
-  }, [dispatch]);
+  useEffect(() => {
+    dispatch(getCurrentWeather({ lat: currentLocation.lat, lon: currentLocation.lon}));
+    dispatch(getAirPollution({ lat: currentLocation.lat, lon: currentLocation.lon}));
+    dispatch(getForecast({ lat: currentLocation.lat, lon: currentLocation.lon}));
+  }, [dispatch, currentLocation,currentCity]);
   return (
     <main>
       <article className="container" data-container>
@@ -65,7 +75,7 @@ function WeatherScreen() {
                 </li>
                 <li className="meta-item">
                   <span className="m-icon">location_on</span>
-                  <p className="title-3 meta-text">London, GB</p>
+                  <p className="title-3 meta-text">{currentCity}</p>
                 </li>
               </ul>
             </div>
@@ -82,8 +92,8 @@ function WeatherScreen() {
 
             <div className="card card-lg forecast-card">
               <ul>
-                {fiveDayForecast.map((item) => (
-                  <li className="card-item">
+                {fiveDayForecast.map((item,index) => (
+                  <li className="card-item" key={index}>
                     <div className="icon-wrapper">
                       <img
                         src={getImage(item.icon)}
@@ -273,7 +283,7 @@ function WeatherScreen() {
           <Footer />
         </div>
 
-        <div className="loading" data-loading></div>
+        <div className="loading" style={isLoading ? {display:'grid' } : undefined}></div>
       </article>
     </main>
   );

@@ -117,15 +117,16 @@
       gap: 16px;
       padding-inline: 16px 24px;
 
-      & :is(.m-icon, .item-subtitle) {
-        color: $on-surface-variant;
+      &:hover {
+        background-color: $on-surface-variant-2;
       }
 
-      .item-link {
-        position: absolute;
-        inset: 0;
-        box-shadow: none;
+      & :is(.m-icon, .item-subtitle) {
+        color: $on-surface-variant;
+        cursor: pointer;
       }
+
+
 
 
     }

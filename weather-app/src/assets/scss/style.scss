@@ -217,7 +217,7 @@
       animation: none;
 
       .search-wrapper { 
-        border-block-end: none; 
+         
         
         & > .m-icon{
           display: block; 
@@ -244,9 +244,9 @@
         overflow-y: overlay;
       }
 
-      .search-result{
-        display: none;
-      }
+      // .search-result{
+      //   display: none;
+      // }
 
     }
 
@@ -255,9 +255,21 @@
   }
 
   .search-result,
-  .search-view:not(:focus-within) .search-result { display: none; }
+  // .search-view:not(:focus-within) .search-result { display: none; }
 
-  .search-view:focus-within .search-result.active { display: block; }
+  // .search-view:focus-within .search-result.active { display: block; }
+
+  .dropdown{
+    display: block;
+  }
+
+  .display{
+    display: none;
+  }
+
+  .btm-border{
+    border-block-end: none;
+  }
 
   .search-view:has(.search-result.active):focus-within .search-field {
     border-bottom-left-radius: 0;
