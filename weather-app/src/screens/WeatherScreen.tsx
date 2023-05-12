@@ -36,6 +36,7 @@ function WeatherScreen() {
   
   const badgeClassName = 'badge label-1 aqi-' + airPollution.aqi;
 
+
   useEffect(() => {
     dispatch(getCurrentWeather({ lat: currentLocation.lat, lon: currentLocation.lon}));
     dispatch(getAirPollution({ lat: currentLocation.lat, lon: currentLocation.lon}));
@@ -132,25 +133,25 @@ function WeatherScreen() {
                       <span className="m-icon">air</span>
                       <ul className="card-list">
                         <li className="card-item">
-                          <p className="title-1">{airPollution.pm2_5}</p>
+                          <p className="title-1">{Math.round(airPollution.pm2_5*10)/10}</p>
                           <p className="label-1">
                             PM<sub>2.5</sub>
                           </p>
                         </li>
                         <li className="card-item">
-                          <p className="title-1">{airPollution.so2}</p>
+                          <p className="title-1">{Math.round(airPollution.so2*10)/10}</p>
                           <p className="label-1">
                             SO<sub>2</sub>
                           </p>
                         </li>
                         <li className="card-item">
-                          <p className="title-1">{airPollution.no2}</p>
+                          <p className="title-1">{Math.round(airPollution.no2*10)/10}</p>
                           <p className="label-1">
                             NO<sub>2</sub>
                           </p>
                         </li>
                         <li className="card-item">
-                          <p className="title-1">{airPollution.o3}</p>
+                          <p className="title-1">{Math.round(airPollution.o3*10)/10}</p>
                           <p className="label-1">
                             O<sub>3</sub>
                           </p>

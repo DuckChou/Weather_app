@@ -61,6 +61,11 @@ export const getTime = (timeUnix:number, timezone:number):string => {
   const minutes = date.getUTCMinutes();
   const period = hours >= 12 ? "PM" : "AM";
 
+  if(minutes < 10){
+    return `${hours % 12 || 12}:0${minutes} ${period}`;
+  }
+
+
   return `${hours % 12 || 12}:${minutes} ${period}`;
 }
 
