@@ -43,8 +43,8 @@ function WeatherScreen() {
     dispatch(getForecast({ lat: currentLocation.lat, lon: currentLocation.lon}));
   }, [dispatch, currentLocation,currentCity]);
   return (
-    <main>
-      <article className="container" data-container>
+    <main className='loading-in'>
+      <article className="container">
         <div className="content-left">
           <section
             className="section current-weather"
