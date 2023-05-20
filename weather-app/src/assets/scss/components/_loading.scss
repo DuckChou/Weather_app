@@ -3,7 +3,8 @@
 @import "../animations";
 
 .loading {
-  position: absolute;
+  
+  position:fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -11,7 +12,6 @@
   background-color: $background;
   place-items: center;
   z-index: 1;
-  // display: grid;
   display: none;
 }
 
