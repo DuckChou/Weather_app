@@ -41,6 +41,7 @@ function Header() {
   const toggleNewCityHandler = (lat: number, lon: number, city: string) => {
     dispatch(changeCity({ lat: lat, lon: lon, city: city }));
     setSearch('');
+    setSearchView(false);
   };
 
   const searchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
